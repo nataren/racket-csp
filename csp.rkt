@@ -51,5 +51,9 @@
                      Down (lambda () (CT (- n 1)))))))
 
 ; Instance of a mutually recursively defined process
+(define ct_0 (CT 0))
+(define ct_0_around ((ct_0 Around)))
+(define ct_1 ((ct_0 Up)))
+(define ct_2 ((ct_1 Up)))
 (define around-upup-downdown-down ((((((((((((CT 0) Around)) Up)) Up)) Down)) Down)) Down))
 
