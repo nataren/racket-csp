@@ -9,14 +9,14 @@
 (define Up 'up)
 (define Down 'down)
 
-(define (stop arg) Bleep)
-
+; The 'prefix' notation
 (define (prefix event process)
   (lambda (e)
     (if (equal? e event)
         process
         Bleep)))
 
+; The 'choice' (aka '|') notation
 (define (choice2 e1 p1 e2 p2)
   (lambda (e)
     (cond
@@ -24,6 +24,8 @@
       [(equal? e e2) p2]
       [else Bleep])))
 
+; The 'menu' function returns the events that can appear as
+; the first event for the given process and and the given alphabet
 (define (menu alphabet process)
   (cond 
     [(empty? alphabet) empty]
@@ -31,6 +33,9 @@
     [else (cons (car alphabet) (menu (cdr alphabet) process))]))
 
 ; Sample processes
+
+; The 'stop' process
+(define (stop arg) Bleep)
 (define (coin-then-stop x)
   (if (equal? x Coin)
       stop
