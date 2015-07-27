@@ -24,6 +24,12 @@
       [(equal? e e2) p2]
       [else Bleep])))
 
+(define (menu alphabet process)
+  (cond 
+    [(empty? alphabet) empty]
+    [(equal? (process (eval (car alphabet))) Bleep) (menu (cdr alphabet) process)]
+    [else (cons (car alphabet) (menu (cdr alphabet) process))]))
+
 ; Sample processes
 (define (coin-then-stop x)
   (if (equal? x Coin)
@@ -33,13 +39,10 @@
 (define my-choice (choice2 Coin coin-then-stop Toffee stop))
 
 ; Example of a recursively defined process
-(define VM
-  (lambda ()
-    (prefix Coin (prefix Choc VM))))
+(define VM (prefix Coin (prefix Choc (lambda () VM))))
 
 ; Instance of a recursively defined process
-(define coin-then-choc (((VM) Coin) Choc))
-
+(define coin-then-choc (((VM Coin) Choc)))
 
 ; Example of mutually recursively defined process
 (define CT
