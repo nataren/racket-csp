@@ -8,6 +8,7 @@
 (define Around 'around)
 (define Up 'up)
 (define Down 'down)
+(define End 'end)
 
 ; The 'prefix' notation
 (define (prefix event process)
@@ -31,6 +32,15 @@
     [(empty? alphabet) empty]
     [(equal? (process (eval (car alphabet))) Bleep) (menu (cdr alphabet) process)]
     [else (cons (car alphabet) (menu (cdr alphabet) process))]))
+
+(define (interact alphabet process input)
+  (let ([first-events (menu alphabet process)])
+    (cons first-events
+          (cond
+            [(equal? (car input) End) empty]
+            [(equal? (process (car input)) Bleep)
+             (cons Bleep (interact alphabet process (cdr input)))]
+            [else (interact alphabet (process (car input)) (cdr input))]))))
 
 ; Sample processes
 
