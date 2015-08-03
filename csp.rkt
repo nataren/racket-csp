@@ -33,14 +33,21 @@
     [(equal? (process (eval (car alphabet))) Bleep) (menu (cdr alphabet) process)]
     [else (cons (car alphabet) (menu (cdr alphabet) process))]))
 
+(define (get-process process)
+  (let ([arity (procedure-arity process)])
+  (cond
+    [(eq? arity 0) (process)]
+    [(eq? arity 1) process])))
+           
 (define (interact alphabet process input)
-  (let ([first-events (menu alphabet process)])
-    (cons first-events
+  (let ([possible-events (menu alphabet (get-process process))])
+    (cons possible-events
           (cond
-            [(equal? (car input) End) empty]
-            [(equal? (process (car input)) Bleep)
+            [(empty? input) empty]
+            [(equal? (eval (car input)) End) empty]
+            [(equal? ((get-process process) (eval (car input))) Bleep)
              (cons Bleep (interact alphabet process (cdr input)))]
-            [else (interact alphabet (process (car input)) (cdr input))]))))
+            [else (interact alphabet ((get-process process) (eval (car input))) (cdr input))]))))
 
 ; Sample processes
 
@@ -54,10 +61,7 @@
 (define my-choice (choice2 Coin coin-then-stop Toffee stop))
 
 ; Example of a recursively defined process
-(define VM (prefix Coin (prefix Choc (lambda () VM))))
-
-; Instance of a recursively defined process
-(define coin-then-choc (((VM Coin) Choc)))
+(define VMS (prefix Coin (prefix Choc (lambda () VMS))))
 
 ; Example of mutually recursively defined process
 (define CT
