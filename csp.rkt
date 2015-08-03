@@ -66,7 +66,7 @@
 ; Example of mutually recursively defined process
 (define CT
     (lambda (n)
-        (if (= n 0)
+        (if (equal? n 0)
             (choice2 Around (lambda () (CT 0))
                      Up (lambda () (CT 1)))
             (choice2 Up (lambda () (CT (+ n 1)))
