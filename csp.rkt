@@ -98,6 +98,14 @@
     [else (equal? (first-of-trace s) (first-of-trace t))
           (is-trace-prefix (rest-of-trace s) (rest-of-trace t))]))
 
+(define (is-trace t process)
+  (let ([proc (get-process process)]
+        [t_0 (lambda () (eval (first-of-trace t)))])
+  (cond
+    [(empty? t) true]
+    [(equal? (proc (t_0)) Bleep) false]
+    [else (is-trace (rest-of-trace t) (proc (t_0)))])))
+
 ;; Sample processes
 ; The 'stop' process
 (define (stop arg) Bleep)
@@ -110,12 +118,22 @@
 
 ; Example of a recursively defined process
 (define VMS (prefix Coin (prefix Choc (lambda () VMS))))
+
 (define VMC (choice2
              In2p (choice2 Large (lambda () VMC)  Small (lambda () VMC))
              In1p (choice2 Small (lambda () VMC)
                            In1p (choice2 Large (lambda () VMC)
                                          In1p stop))))
-             
+
+(define VMCT (prefix Coin (choice2 Choc (lambda () VMCT)
+                                   Toffee (lambda () VMCT))))
+
+(define VMCRED (choice2
+                Coin (prefix Choc (lambda () VMCRED))
+                Choc (prefix Coin (lambda () VMCRED))))
+
+(define VMS2 (prefix Coin VMCRED))
+
 ; Example of mutually recursively defined process
 (define CT
     (lambda (n)
