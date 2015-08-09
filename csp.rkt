@@ -1,7 +1,5 @@
 #lang racket
 
-; (define ns (make-base-namespace))
-
 ; Primitives
 (define Coin 'coin)
 (define Toffee 'toffee)
@@ -102,4 +100,4 @@
 (define around-upup-downdown-down ((((((((((((CT 0) Around)) Up)) Up)) Down)) Down)) Down))
 
 ;; (menu '(Coin Choc End) (VMS Coin))
-;; (interact2 '(Coin Choc End) VMS (current-input-port))
+;; (interact-with-process '(Coin Choc End) VMS (current-input-port))
