@@ -1,22 +1,5 @@
 #lang racket
 
-; Primitives
-(define Coin 'coin)
-(define Toffee 'toffee)
-(define Choc 'chocolate)
-(define Bleep 'bleep)
-(define Around 'around)
-(define Up 'up)
-(define Down 'down)
-(define End 'end)
-
-;; Symbols for VMC's definition
-(define In1p 'in1p)
-(define In2p 'in2p)
-(define Out1p 'out1p)
-(define Large 'large)
-(define Small 'small)
-
 ; The 'prefix' notation
 (define (prefix event process)
   (lambda (e)
@@ -31,6 +14,15 @@
       [(equal? e e1) p1]
       [(equal? e e2) p2]
       [else Bleep])))
+
+; The process 'intersect' (aka '||') notation
+(define (intersect p q)
+  (lambda (z)
+    (cond
+      [(equal? ((get-process p) z) Bleep) Bleep]
+      [(equal? ((get-process q) z) Bleep) Bleep]
+      [else (intersect ((get-process p) z)
+                       ((get-process q) z))])))
 
 ; The 'menu' function returns the events that can appear as
 ; the first event for the given process and and the given alphabet
@@ -107,6 +99,16 @@
     [else (is-trace (rest-of-trace t) (proc (t_0)))])))
 
 ;; Sample processes
+; Primitives
+(define Coin 'coin)
+(define Toffee 'toffee)
+(define Choc 'chocolate)
+(define Bleep 'bleep)
+(define Around 'around)
+(define Up 'up)
+(define Down 'down)
+(define End 'end)
+
 ; The 'stop' process
 (define (stop arg) Bleep)
 (define (coin-then-stop x)
@@ -119,6 +121,11 @@
 ; Example of a recursively defined process
 (define VMS (prefix Coin (prefix Choc (lambda () VMS))))
 
+(define In1p 'in1p)
+(define In2p 'in2p)
+(define Out1p 'out1p)
+(define Large 'large)
+(define Small 'small)
 (define VMC (choice2
              In2p (choice2 Large (lambda () VMC)  Small (lambda () VMC))
              In1p (choice2 Small (lambda () VMC)
