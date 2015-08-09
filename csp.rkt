@@ -1,5 +1,7 @@
 #lang racket
 
+; (define ns (make-base-namespace))
+
 ; Primitives
 (define Coin 'coin)
 (define Toffee 'toffee)
@@ -39,18 +41,38 @@
     [(eq? arity 0) (process)]
     [(eq? arity 1) process])))
            
-(define (interact alphabet process input)
+(define (interact-with-process alphabet process input)
+  (let ([possible-events 
+         (string-join
+          (map symbol->string (menu alphabet (get-process process)))
+          ", ")])
+    (fprintf
+     (current-output-port) "choose from the possible inputs: ~a~n" possible-events)
+    (let ([i (read input)])
+      (cond
+        [(equal? (eval i) End)
+         (displayln "reached the end, will loop again")
+         (interact-with-process alphabet process input)]
+        [(equal? ((get-process process) (eval i)) Bleep)
+         (displayln Bleep)
+         (interact-with-process alphabet process input)]
+        [else (interact-with-process alphabet ((get-process process) (eval i)) input)]))))
+
+(define (interact-with-process-batch alphabet process commands-list)
   (let ([possible-events (menu alphabet (get-process process))])
     (cons possible-events
           (cond
-            [(empty? input) empty]
-            [(equal? (eval (car input)) End) empty]
-            [(equal? ((get-process process) (eval (car input))) Bleep)
-             (cons Bleep (interact alphabet process (cdr input)))]
-            [else (interact alphabet ((get-process process) (eval (car input))) (cdr input))]))))
+            [(empty? commands-list) empty]
+            [(equal? (eval (car commands-list)) End) empty]
+            [(equal? ((get-process process) (eval (car commands-list))) Bleep)
+             (cons Bleep (interact-with-process-batch alphabet process (cdr commands-list)))]
+            [else
+             (interact-with-process-batch alphabet
+                       ((get-process process)
+                        (eval (car commands-list)))
+                       (cdr commands-list))]))))
 
-; Sample processes
-
+;; Sample processes
 ; The 'stop' process
 (define (stop arg) Bleep)
 (define (coin-then-stop x)
@@ -79,3 +101,5 @@
 (define ct_2 ((ct_1 Up)))
 (define around-upup-downdown-down ((((((((((((CT 0) Around)) Up)) Up)) Down)) Down)) Down))
 
+;; (menu '(Coin Choc End) (VMS Coin))
+;; (interact2 '(Coin Choc End) VMS (current-input-port))
