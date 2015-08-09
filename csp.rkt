@@ -77,6 +77,27 @@
                        ((get-process process)
                         (eval (car commands-list)))
                        (cdr commands-list))]))))
+; Traces
+(define empty-trace '())
+(define trace (lambda elems elems))
+(define (first-of-trace t) (car t))
+(define (rest-of-trace t) (cdr t))
+
+(define (is-trace-member e t)
+  (cond
+    [(empty? t) false]
+    [(equal? e (first-of-trace t)) true]
+    [else (is-trace-member e (rest-of-trace t))]))
+
+(define (restrict-trace tr restriction)
+  (filter (lambda (e) (is-trace-member e restriction)) tr))
+
+(define (is-trace-prefix  s t)
+  (cond
+    [(empty? s)]
+    [(empty? t) false]
+    [else (equal? (first-of-trace s) (first-of-trace t))
+          (is-trace-prefix (rest-of-trace s) (rest-of-trace t))]))
 
 ;; Sample processes
 ; The 'stop' process
