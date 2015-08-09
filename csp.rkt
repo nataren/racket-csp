@@ -16,7 +16,6 @@
 (define Out1p 'out1p)
 (define Large 'large)
 (define Small 'small)
-(define Stop 'stop)
 
 ; The 'prefix' notation
 (define (prefix event process)
@@ -115,7 +114,7 @@
              In2p (choice2 Large (lambda () VMC)  Small (lambda () VMC))
              In1p (choice2 Small (lambda () VMC)
                            In1p (choice2 Large (lambda () VMC)
-                                         In1p Stop))))
+                                         In1p stop))))
              
 ; Example of mutually recursively defined process
 (define CT
