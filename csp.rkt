@@ -98,6 +98,21 @@
     [(equal? (proc (t_0)) Bleep) false]
     [else (is-trace (rest-of-trace t) (proc (t_0)))])))
 
+(define (concurrent p alphap alphaq q)
+  (define (concurrent-helper p q)
+    (lambda (x)
+      (cond
+        [(or (equal? (get-process p) Bleep)
+             (equal? (get-process q) Bleep))
+         Bleep]
+        [(and (is-trace-member x alphap)
+              (is-trace-member x alphaq))
+         (concurrent-helper ((get-process p) x) ((get-process q) x))]
+        [(is-trace-member x alphap) (concurrent-helper ((get-process p) x) (get-process q))]
+        [(is-trace-member x alphaq) (concurrent-helper (get-process p) ((get-process q) x))]
+        [else Bleep])))
+  (concurrent-helper p q))
+
 ;; Sample processes
 ; Primitives
 (define Coin 'coin)
